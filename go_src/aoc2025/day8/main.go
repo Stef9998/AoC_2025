@@ -1,54 +1,37 @@
 package main
 
 import (
-	"fmt"
 	"go_src/util"
-	"os"
 	"slices"
 	"strconv"
 	"strings"
-	"time"
 )
 
-const day = 8
+const (
+	day = 8
+	// const example = true
+	example = false
+)
 
-// const example = true
-const example = false
+func readIn[L string | []rune](reader func(day int, filename string) ([]L, error)) []L {
+	return util.ReadIn(reader, day, example)
+}
 
 func main() {
 	lines := readIn(util.ReadLines)
 	parsed := parse(lines)
-	var result int
-	var start time.Time
-	var duration time.Duration
-	start = time.Now()
-	result = p1(parsed)
-	duration = time.Since(start)
-	fmt.Printf("Part 1: %d  time: %dms\n", result, duration.Milliseconds())
+	result := util.Run(p1, parsed, 1)
 	if !example {
 		if result != 115885 {
-			fmt.Println("Wrong result of part 1")
+			panic("Wrong result of part 1")
 		}
 	}
-	start = time.Now()
-	result = p2(parsed)
-	duration = time.Since(start)
-	fmt.Printf("Part 2: %d  time: %dms\n", result, duration.Milliseconds())
-}
-
-func readIn[L string | []rune](reader func(day int, filename string) ([]L, error)) []L {
-	var textfile string
-	if example {
-		textfile = "example"
-	} else {
-		textfile = "input"
+	if !example {
+		result = util.Run(p2, parsed, 2)
+		if result != 274150525 {
+			panic("Wrong result of part 2")
+		}
 	}
-	lines, err := reader(day, textfile+".txt")
-	if err != nil {
-		fmt.Printf("Error when reading in file %s from day %d\n%s", textfile, day, err)
-		os.Exit(-1)
-	}
-	return lines
 }
 
 type edge struct {

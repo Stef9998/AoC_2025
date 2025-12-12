@@ -1,27 +1,33 @@
 package main
 
 import (
-	"fmt"
 	"go_src/util"
-	"os"
 )
 
-const day = 7
+const (
+	day = 7
+	//example = true
+	example = false
+)
 
+func readIn[L string | []rune](reader func(day int, filename string) ([]L, error)) []L {
+	return util.ReadIn(reader, day, example)
+}
 func main() {
-	//const textfile = "example"
-	const textfile = "input"
-	lines, err := util.ReadChars(day, textfile+".txt")
-	if err != nil {
-		fmt.Printf("Error when reading in file %s from day %d\n%s", textfile, day, err)
-		os.Exit(-1)
-	}
+	lines := readIn(util.ReadChars)
 	parsed := parse(lines)
-	var result int
-	result = p1(parsed)
-	fmt.Println("Part 1:", result)
-	result = p2(parsed)
-	fmt.Println("Part 2:", result)
+	result := util.Run(p1, parsed, 1)
+	if !example {
+		if result != 1649 {
+			panic("wrong result")
+		}
+	}
+	result = util.Run(p2, parsed, 2)
+	if !example {
+		if result != 16937871060075 {
+			panic("wrong result")
+		}
+	}
 
 }
 

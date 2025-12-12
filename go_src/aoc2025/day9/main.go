@@ -3,59 +3,37 @@ package main
 import (
 	"fmt"
 	"go_src/util"
-	"os"
 	"slices"
 	"strconv"
 	"strings"
-	"time"
 )
 
 type Coordinate = util.Coordinate
 
-const day = 9
-
-//const example = true
-
-const example = false
+const (
+	day = 9
+	//const example = true
+	example = false
+)
 
 func readIn[L string | []rune](reader func(day int, filename string) ([]L, error)) []L {
-	var textfile string
-	if example {
-		textfile = "example"
-	} else {
-		textfile = "input"
-	}
-	lines, err := reader(day, textfile+".txt")
-	if err != nil {
-		fmt.Printf("Error when reading in file %s from day %d\n%s", textfile, day, err)
-		os.Exit(-1)
-	}
-	return lines
+	return util.ReadIn(reader, day, example)
 }
 func main() {
 	lines := readIn(util.ReadLines)
 	var result int
-	result = run(p1, parse(lines), 1)
+	result = util.Run(p1, parse(lines), 1)
 	if !example {
 		if result != 4763509452 {
 			fmt.Println("wrong result")
 		}
 	}
-	result = run(p2, parse(lines), 2)
+	result = util.Run(p2, parse(lines), 2)
 	if !example {
 		if result != 1516897893 {
 			fmt.Println("wrong result")
 		}
 	}
-
-}
-
-func run[PT any](code func(PT) int, parsed PT, partNo int) int {
-	start := time.Now()
-	result := code(parsed)
-	duration := time.Since(start)
-	fmt.Printf("Part %d: %d  time: %dms\n", partNo, result, duration.Milliseconds())
-	return result
 }
 
 type Rectangle struct {

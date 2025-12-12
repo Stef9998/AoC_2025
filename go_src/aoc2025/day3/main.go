@@ -1,33 +1,34 @@
 package main
 
 import (
-	"fmt"
 	"go_src/util"
-	"os"
 	"strconv"
 )
 
-const day = 3
+const (
+	day = 3
+	//example = true
+	example = false
+)
 
+func readIn[L string | []rune](reader func(day int, filename string) ([]L, error)) []L {
+	return util.ReadIn(reader, day, example)
+}
 func main() {
-	//const textfile = "example"
-	const textfile = "input"
-	lines, err := util.ReadLines(day, textfile+".txt")
-	if err != nil {
-		fmt.Printf("Error when reading in file %s from day %d\n%s", textfile, day, err)
-		os.Exit(-1)
-	}
+	lines := readIn(util.ReadLines)
 	parsed := parse(lines)
 	result := -1
-	result = p1(parsed)
-	fmt.Println("Part 1:", result)
-	if result != 17109 {
-		panic("wrong result")
+	result = util.Run(p1, parsed, 1)
+	if !example {
+		if result != 17109 {
+			panic("wrong result")
+		}
 	}
-	result = p2(parsed)
-	fmt.Println("Part 2:", result)
-	if result != 169347417057382 {
-		panic("wrong result")
+	result = util.Run(p2, parsed, 2)
+	if !example {
+		if result != 169347417057382 {
+			panic("wrong result")
+		}
 	}
 }
 
@@ -37,7 +38,7 @@ func p2(banks []T) int {
 	sum := 0
 	for _, bank := range banks {
 		p2res := p2calc(bank)
-		fmt.Println(p2res)
+		//fmt.Println(p2res)
 		sum += p2res
 	}
 	return sum

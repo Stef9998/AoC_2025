@@ -9,32 +9,34 @@ import (
 	"strings"
 )
 
-const day = 5
+const (
+	day = 5
+	//example = true
+	example = false
+)
 
+func readIn[L string | []rune](reader func(day int, filename string) ([]L, error)) []L {
+	return util.ReadIn(reader, day, example)
+}
 func main() {
-	//const textfile = "example"
-	const textfile = "input"
-	lines, err := util.ReadLines(day, textfile+".txt")
-	if err != nil {
-		fmt.Printf("Error when reading in file %s from day %d\n%s", textfile, day, err)
-		os.Exit(-1)
-	}
+	lines := readIn(util.ReadLines)
 	freshRange, ingredientNums, err := util.SplitAtEmptyLine(lines)
 	if err != nil {
-		fmt.Printf("Error when reading in file %s from day %d\n%s", textfile, day, err)
+		fmt.Printf("Error when reading in file from day %d\n%s", day, err)
 		os.Exit(-1)
 	}
 	parsed := parse(freshRange, ingredientNums)
-	result := -1
-	result = p1(parsed)
-	fmt.Println("Part 1:", result)
-	if textfile == "input" && result != 739 {
-		panic("wrong result for part 1")
+	result := util.Run(p1, parsed, 1)
+	if !example {
+		if result != 739 {
+			panic("wrong result for part 1")
+		}
 	}
-	result = p2(parsed)
-	fmt.Println("Part 2:", result)
-	if textfile == "input" && result != 344486348901788 {
-		panic("wrong result for part 2")
+	result = util.Run(p2, parsed, 2)
+	if !example {
+		if result != 344486348901788 {
+			panic("wrong result for part 2")
+		}
 	}
 }
 

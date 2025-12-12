@@ -5,7 +5,6 @@ import (
 	"go_src/util"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/dominikbraun/graph"
 )
@@ -34,13 +33,6 @@ func readIn[L string | []rune](reader func(day int, filename string) ([]L, error
 	}
 	return lines
 }
-func run[PT any](code func(PT) int, parsed PT, partNo int) int {
-	start := time.Now()
-	result := code(parsed)
-	duration := time.Since(start)
-	fmt.Printf("Part %d: %d  time: %dms\n", partNo, result, duration.Milliseconds())
-	return result
-}
 func main() {
 	var parsed PT
 	var lines []string
@@ -51,19 +43,19 @@ func main() {
 		lines = readIn(util.ReadLines, "")
 	}
 	parsed = parse(lines)
-	result = run(p1, parsed, 1)
-	//if !example {
-	//if result !=  {
-	//	fmt.Println("Wrong result of part 1")
-	//}
-	//}
+	result = util.Run(p1, parsed, 1)
+	if !example {
+		if result != 523 {
+			fmt.Println("Wrong result of part 1")
+		}
+	}
 	if example {
 		lines = readIn(util.ReadLines, "example2")
 	} else {
 		lines = readIn(util.ReadLines, "")
 	}
 	parsed = parse(lines)
-	result = run(p2, parsed, 2)
+	result = util.Run(p2, parsed, 2)
 	if !example {
 		if result != 517315308154944 {
 			fmt.Println("wrong result")
@@ -78,7 +70,7 @@ func p2(input PT) int {
 	count := 1
 
 	s, v1, v2, e := p2order(input)
-	fmt.Println(v1, "->", v2)
+	//fmt.Println(v1, "->", v2)
 
 	adj, _ := input.AdjacencyMap()
 	part := pathCount(s, v1, adj)
@@ -95,8 +87,8 @@ func p2(input PT) int {
 }
 func p2order(input PT) (string, string, string, string) {
 	var fftToDac bool
-	path, err := graph.ShortestPath(input, "fft", "dac")
-	fmt.Println(path)
+	_, err := graph.ShortestPath(input, "fft", "dac")
+	//fmt.Println(path)
 	if err == nil {
 		fftToDac = true
 	} else {

@@ -9,41 +9,22 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 )
 
-const day = 10
-
-//const example = true
-
-const example = false
+const (
+	day = 10
+	//example = true
+	example = false
+)
 
 func readIn[L string | []rune](reader func(day int, filename string) ([]L, error)) []L {
-	var textfile string
-	if example {
-		textfile = "example"
-	} else {
-		textfile = "input"
-	}
-	lines, err := reader(day, textfile+".txt")
-	if err != nil {
-		fmt.Printf("Error when reading in file %s from day %d\n%s", textfile, day, err)
-		os.Exit(-1)
-	}
-	return lines
-}
-func run[PT any](code func(PT) int, parsed PT, partNo int) int {
-	start := time.Now()
-	result := code(parsed)
-	duration := time.Since(start)
-	fmt.Printf("Part %d: %d  time: %dms\n", partNo, result, duration.Milliseconds())
-	return result
+	return util.ReadIn(reader, day, example)
 }
 func main() {
 	lines := readIn(util.ReadLines)
 	parsed := parse(lines)
 	var result int
-	result = run(p1, parsed, 1)
+	result = util.Run(p1, parsed, 1)
 	if !example {
 		if result != 417 {
 			fmt.Println("Wrong result of part 1")
@@ -52,7 +33,7 @@ func main() {
 	parsed = parse(lines)
 	//result = run(p2, parsed, 2)
 	//result = run(p2_par, parsed, 2)
-	result = run(p2_ilp, parsed, 2)
+	result = util.Run(p2_ilp, parsed, 2)
 	if !example {
 		if result != 16765 {
 			fmt.Println("wrong result")

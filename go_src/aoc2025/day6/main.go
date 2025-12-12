@@ -1,37 +1,39 @@
 package main
 
 import (
-	"fmt"
 	"go_src/util"
-	"os"
 	"strconv"
 	"strings"
 )
 
-const day = 6
+const (
+	day = 6
+	//example = true
+	example = false
+)
 
+func readIn[L string | []rune](reader func(day int, filename string) ([]L, error)) []L {
+	return util.ReadIn(reader, day, example)
+}
 func main() {
-	//const textfile = "example"
-	const textfile = "input"
-	lines, err := util.ReadLines(day, textfile+".txt")
-	if err != nil {
-		fmt.Printf("Error when reading in file %s from day %d\n%s", textfile, day, err)
-		os.Exit(-1)
-	}
+	lines := readIn(util.ReadLines)
 	parsed := parse(lines)
-	var result int
-	result = p1(parsed)
-	fmt.Println("Part 1:", result)
-	if result != 6891729672676 {
-		fmt.Println(fmt.Errorf("wrong result"))
+	result := util.Run(p1, parsed, 1)
+	if !example {
+		if result != 6891729672676 {
+			panic("wrong result")
+		}
 	}
 	chars, err := util.LinesToChars(lines)
 	if err != nil {
 		panic("error parsing input")
 	}
-	result = p2(chars)
-	fmt.Println("Part 2:", result)
-
+	result = util.Run(p2, chars, 2)
+	if !example {
+		if result != 9770311947567 {
+			panic("wrong result")
+		}
+	}
 }
 
 type T struct {

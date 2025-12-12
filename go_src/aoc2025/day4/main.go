@@ -3,29 +3,32 @@ package main
 import (
 	"fmt"
 	"go_src/util"
-	"os"
 )
 
-const day = 4
+const (
+	day = 4
+	//example = true
+	example = false
+)
 
+func readIn[L string | []rune](reader func(day int, filename string) ([]L, error)) []L {
+	return util.ReadIn(reader, day, example)
+}
 func main() {
-	//const textfile = "example"
-	const textfile = "input"
-	input, err := util.ReadChars(day, textfile+".txt")
-	if err != nil {
-		fmt.Printf("Error when reading in file %s from day %d\n%s", textfile, day, err)
-		os.Exit(-1)
+	lines := readIn(util.ReadChars)
+	parsed := parse(lines)
+	result := util.Run(p1, parsed, 1)
+	if !example {
+		if result != 1626 {
+			panic("wrong result")
+		}
 	}
-	parsed := parse(input)
-	//printMap(input)
-	//fmt.Println("")
-	//printMap(parsed)
-	result := -1
-	result = p1(parsed)
-	fmt.Println("Part 1:", result)
-	result = p2(parsed)
-	fmt.Println("Part 2:", result)
-
+	result = util.Run(p2, parsed, 2)
+	if !example {
+		if result != 9173 {
+			panic("wrong result")
+		}
+	}
 }
 func printMap(input [][]rune) {
 	for _, row := range input {

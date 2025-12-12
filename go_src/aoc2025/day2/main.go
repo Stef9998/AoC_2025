@@ -1,30 +1,35 @@
 package main
 
 import (
-	"fmt"
 	"go_src/util"
-	"os"
 	"strconv"
 	"strings"
 )
 
-const day = 2
+const (
+	day = 2
+	//example = true
+	example = false
+)
 
+func readIn[L string | []rune](reader func(day int, filename string) ([]L, error)) []L {
+	return util.ReadIn(reader, day, example)
+}
 func main() {
-	//const textfile = "example"
-	const textfile = "input"
-	lines, err := util.ReadLines(day, textfile+".txt")
-	if err != nil {
-		fmt.Printf("Error when reading in file %s from day %d\n%s", textfile, day, err)
-		os.Exit(-1)
-	}
+	lines := readIn(util.ReadLines)
 	parsed := parse(lines)
-	result := -1
-	result = p1(parsed)
-	fmt.Println("Part 1:", result)
-	result = p2(parsed)
-	fmt.Println("Part 2:", result)
-
+	result := util.Run(p1, parsed, 1)
+	if !example {
+		if result != 41294979841 {
+			panic("wrong result")
+		}
+	}
+	result = util.Run(p2, parsed, 2)
+	if !example {
+		if result != 66500947346 {
+			panic("wrong result")
+		}
+	}
 }
 
 type Range struct {
