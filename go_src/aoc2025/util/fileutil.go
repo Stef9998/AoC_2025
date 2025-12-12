@@ -58,6 +58,28 @@ func SplitAtEmptyLine(lines []string) ([]string, []string, error) {
 	return nil, nil, fmt.Errorf("no empty line found")
 }
 
+func SplitAtAllEmptyLines(lines []string) ([][]string, error) {
+	ret := make([][]string, 0)
+	prevLine := 0
+	for i, line := range lines {
+		if line == "" {
+			if i == prevLine {
+				if i == 0 {
+					return nil, fmt.Errorf("first line can't be empty")
+				}
+				return nil, fmt.Errorf("can't have two empty lines after each other")
+			}
+			ret = append(ret, lines[prevLine:i])
+			prevLine = i + 1
+		}
+	}
+	if prevLine == len(lines) {
+		return nil, fmt.Errorf("last line can't be empty")
+	}
+	ret = append(ret, lines[prevLine:])
+	return ret, nil
+}
+
 func SeparatedNumbers(line string, sep string) ([]int, error) {
 	values := strings.Split(line, sep)
 	if len(values) == 1 {
