@@ -7,7 +7,7 @@ const std_input_file_name = "input";
 const Modules = [_]type{
     struct {},
     @import("days/day01.zig"),
-    // @import("days/day02.zig"),
+    @import("days/day02.zig"),
     // @import("days/day03.zig"),
     // @import("days/day04.zig"),
     // @import("days/day05.zig"),
