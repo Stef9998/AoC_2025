@@ -1,0 +1,12 @@
+.{
+    .name = .zig_src,
+    .version = "0.16.0",
+    .dependencies = .{
+        .clap = .{
+            .url = "https://github.com/Hejsil/zig-clap/archive/refs/tags/0.12.0.tar.gz",
+            .hash = "clap-0.12.0-oBajB7foAQDqlSwaSG5g0yq7xGbQARUsBk5T64gAOqP5",
+        },
+    },
+    .paths = .{""},
+    .fingerprint = 0xddf647bf0a715283,
+}
