@@ -6,6 +6,12 @@ pub fn build(b: *std.Build) void {
 
     // Define a reusable module for common.zig that can be imported as @import("common")
     const common = b.createModule(.{ .root_source_file = b.path("common.zig") });
+    const clap = b.dependency("clap", .{}).module("clap");
+
+    const main_imports: []const std.Build.Module.Import = &.{
+        .{ .name = "common", .module = common },
+        .{ .name = "clap", .module = clap },
+    };
 
     const exe = b.addExecutable(.{
         .name = "aoc",
@@ -13,14 +19,9 @@ pub fn build(b: *std.Build) void {
             .root_source_file = b.path("main.zig"),
             .target = target,
             .optimize = optimize,
-            .imports = &.{
-                .{ .name = "common", .module = common },
-            },
+            .imports = main_imports,
         }),
     });
-
-    const clap = b.dependency("clap", .{});
-    exe.root_module.addImport("clap", clap.module("clap"));
 
     b.installArtifact(exe);
 
@@ -30,4 +31,17 @@ pub fn build(b: *std.Build) void {
 
     const run_step = b.step("run", "Run a day");
     run_step.dependOn(&run_cmd.step);
+
+    const tests = b.addTest(.{
+        .root_module = b.createModule(.{
+            .root_source_file = b.path("main.zig"),
+            .target = target,
+            .optimize = optimize,
+            .imports = main_imports,
+        }),
+    });
+    const run_tests = b.addRunArtifact(tests);
+
+    const test_step = b.step("test", "Run unit tests");
+    test_step.dependOn(&run_tests.step);
 }

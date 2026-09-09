@@ -105,3 +105,43 @@ fn runPart(io: std.Io, allocator: std.mem.Allocator, runner: *const fn (std.mem.
     std.debug.print("Part {d}: {d} ({f})\n", .{ part, result, start.untilNow(io, .awake) });
     return result;
 }
+
+test "implemented days match expected.csv" {
+    const allocator = std.testing.allocator;
+    const io = std.testing.io;
+
+    const csv = try common.readFile(io, allocator, "../expected.csv");
+    defer allocator.free(csv);
+
+    var lines = std.mem.splitScalar(u8, csv, '\n');
+    _ = lines.next(); // header
+
+    while (lines.next()) |raw_line| {
+        const line = std.mem.trimEnd(u8, raw_line, "\r");
+        if (line.len == 0) continue;
+
+        var fields = std.mem.splitScalar(u8, line, ',');
+        const day = try std.fmt.parseInt(usize, fields.next().?, 10);
+        const part = try std.fmt.parseInt(u2, fields.next().?, 10);
+        const type_field = fields.next().?;
+        const input_type: u2 = if (type_field.len == 0) 0 else try std.fmt.parseInt(u2, type_field, 10);
+        const answer_field = fields.next().?;
+        const expected: u64 = if (answer_field.len == 0) continue else try std.fmt.parseInt(u64, answer_field, 10);
+
+        const runner = lookupDay(day) orelse continue;
+
+        var path_buf: [64]u8 = undefined;
+        const path = switch (input_type) {
+            0 => try std.fmt.bufPrint(&path_buf, "../input/day{d}/{s}.txt", .{ day, std_input_file_name }),
+            else => return error.NotImplemented,
+        };
+        const input = try common.readFile(io, allocator, path);
+        defer allocator.free(input);
+
+        const actual = try runner(allocator, input, part);
+        std.testing.expectEqual(expected, actual) catch |err| {
+            std.debug.print("day {d} part {d}: expected {d}, got {d}\n", .{ day, part, expected, actual });
+            return err;
+        };
+    }
+}
