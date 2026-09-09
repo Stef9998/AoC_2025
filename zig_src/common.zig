@@ -28,3 +28,26 @@ pub fn parseInts(allocator: std.mem.Allocator, input: []const u8, sep: u8) ![]i6
     }
     return list.toOwnedSlice(allocator);
 }
+
+pub const Coordinate = struct {
+    x: isize,
+    y: isize,
+
+    pub fn offset(self: *Coordinate, c2: Coordinate) void {
+        self.x += c2.x;
+        self.y += c2.y;
+    }
+};
+
+pub fn addCoord(c1: Coordinate, c2: Coordinate) Coordinate {
+    return Coordinate{
+        .x = c1.x + c2.x,
+        .y = c1.y + c2.y,
+    };
+}
+
+pub fn printMap(map: []const []const u8) void {
+    for (map) |row| {
+        std.debug.print("{s}\n", .{row});
+    }
+}
