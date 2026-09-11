@@ -12,7 +12,7 @@ const Modules = [_]type{
     @import("days/day04.zig"),
     @import("days/day05.zig"),
     @import("days/day06.zig"),
-    // @import("days/day07.zig"),
+    @import("days/day07.zig"),
     // @import("days/day08.zig"),
     // @import("days/day09.zig"),
     // @import("days/day10.zig"),
