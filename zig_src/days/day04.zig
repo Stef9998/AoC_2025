@@ -1,6 +1,8 @@
 const std = @import("std");
 const common = @import("common");
-const Coordinate = common.Coordinate;
+const map_util = @import("map_util");
+const Coordinate = map_util.Coordinate;
+const ImmutableMap = map_util.Map(u8);
 
 const SURROUNDING_COORDINATES: []const Coordinate = &[8]Coordinate{
     .{ .x = -1, .y = -1 }, .{ .x = 0, .y = -1 }, .{ .x = 1, .y = -1 },
@@ -36,26 +38,6 @@ const Map = union(enum) {
         return switch (self) {
             inline else => |m| m.getCell(coord),
         };
-    }
-};
-
-const ImmutableMap = struct {
-    mapping: [][]const Cell,
-    height: usize,
-    width: usize,
-
-    fn init(lines: [][]const Cell) ImmutableMap {
-        return ImmutableMap{
-            .mapping = lines,
-            .height = lines.len,
-            .width = lines[0].len,
-        };
-    }
-
-    fn getCell(map: ImmutableMap, coord: Coordinate) ?Cell {
-        if (coord.y < 0 or coord.y >= map.height) return null;
-        if (coord.x < 0 or coord.x >= map.width) return null;
-        return map.mapping[@intCast(coord.y)][@intCast(coord.x)];
     }
 };
 
@@ -119,7 +101,7 @@ fn p1CalculateRow(map: Map, row: usize) u64 {
 fn isUnaccessable(map: Map, curr_coord: Coordinate) bool {
     var occ: u3 = 0;
     for (SURROUNDING_COORDINATES) |offset| {
-        const next = common.addCoord(curr_coord, offset);
+        const next = map_util.addCoord(curr_coord, offset);
         const coordinate = map.getCell(next);
         if (coordinate) |coord| {
             if (coord != '.') occ += 1;

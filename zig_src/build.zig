@@ -4,12 +4,13 @@ pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
 
-    // Define a reusable module for common.zig that can be imported as @import("common")
     const common = b.createModule(.{ .root_source_file = b.path("common.zig") });
+    const map_util = b.createModule(.{ .root_source_file = b.path("map.zig") });
     const clap = b.dependency("clap", .{}).module("clap");
 
     const main_imports: []const std.Build.Module.Import = &.{
         .{ .name = "common", .module = common },
+        .{ .name = "map_util", .module = map_util },
         .{ .name = "clap", .module = clap },
     };
 

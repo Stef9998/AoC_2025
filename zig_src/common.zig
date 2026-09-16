@@ -29,25 +29,46 @@ pub fn parseInts(allocator: std.mem.Allocator, input: []const u8, sep: u8) ![]i6
     return list.toOwnedSlice(allocator);
 }
 
-pub const Coordinate = struct {
-    x: isize,
-    y: isize,
+pub fn GrowableIndexList(T: type) type {
+    return struct {
+        list: []T,
 
-    pub fn offset(self: *Coordinate, c2: Coordinate) void {
-        self.x += c2.x;
-        self.y += c2.y;
-    }
-};
+        const Self = @This();
 
-pub fn addCoord(c1: Coordinate, c2: Coordinate) Coordinate {
-    return Coordinate{
-        .x = c1.x + c2.x,
-        .y = c1.y + c2.y,
+        pub fn init(allocator: std.mem.Allocator, initial_capacity: usize) std.mem.Allocator.Error!Self {
+            return Self{
+                .list = try allocator.alloc(T, initial_capacity),
+            };
+        }
+
+        pub fn fill(self: *Self, value: T) void {
+            for (self.list) |*item| {
+                item.* = value;
+            }
+        }
+
+        pub fn get(self: Self, index: usize) ?T {
+            if (index >= self.list.len) return null;
+            return self.list[index];
+        }
+
+        pub fn set(self: *Self, allocator: std.mem.Allocator, pos: usize, value: T) std.mem.Allocator.Error!void {
+            while (pos >= self.list.len) {
+                const new_capacity = if (self.list.len == 0) 16 else self.list.len * 2;
+                const new_list = try allocator.realloc(self.list, new_capacity);
+                self.list = new_list;
+            }
+            self.list[pos] = value;
+        }
+
+        pub fn deinit(self: *Self, allocator: std.mem.Allocator) void {
+            allocator.free(self.list);
+        }
+
+        pub fn toOwnedSlice(self: *Self) []T {
+            const temp = self.list;
+            self.list = undefined;
+            return temp;
+        }
     };
-}
-
-pub fn printMap(map: []const []const u8) void {
-    for (map) |row| {
-        std.debug.print("{s}\n", .{row});
-    }
 }
